@@ -9,12 +9,14 @@ import {
   Routes
 } from "react-router-dom";
 import { Main } from './pages/main';
+import { Input } from './pages/input';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/input" element={<Input />} />
       </Routes>
     </Router>
   );
