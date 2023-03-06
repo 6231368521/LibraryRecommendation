@@ -3,6 +3,8 @@
 backend/.env
 backend/__pycache__
 backend/venv
+backend/adjMatrix.pickle
+backend/userMatrix.pickle
 # dependencies
 frontend/node_modules
 frontend/.pnp
@@ -24,3 +26,6 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+prepareData/.env
+prepareData/data
