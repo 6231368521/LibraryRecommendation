@@ -13,7 +13,7 @@ export const CardCustom = ()=>{
             {faker.music.genre()}
           </Card.Text>
         </div>
-        <Card.Link href="#">Another Link</Card.Link>
+        <Card.Link href="/book/1">Link</Card.Link>
       </Card.Body>
     </Card>
   )

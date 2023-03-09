@@ -1,7 +1,7 @@
 import react from 'react'
 import { CardCustom } from './component';
 
-const ListBook = ({title}) =>{
+export const ListBook = ({title}) =>{
   return (
   <div style={{padding:'20px'}}>
   <div style={{width:'fit-content'}}>
