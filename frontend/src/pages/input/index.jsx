@@ -1,5 +1,4 @@
-import react from 'react'
-import { useState } from 'react';
+import react, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export const Input =  () => {
 
   //TODO add correct subjects
-  const subjectList = ["Law", "Romance", "Non-fiction"];
+  const subjectList = ["Law", "Romance", "Non-fiction", "Shooter"];
   console.log();
   const [id, setId] = useState("");
   const [inputs, setInputs] = useState(subjectList.reduce((a, v) => ({ ...a, [v]: false}), {}));
