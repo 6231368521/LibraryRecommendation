@@ -29,3 +29,4 @@ frontend/yarn-error.log*
 
 prepareData/.env
 prepareData/data
+node_modules
