@@ -1,9 +1,9 @@
 import react, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { CardCustom } from './component';
+import axios from 'axios'
 
-
-export const ListBook = ({title}) =>{
+export const ListBook = ({title,list}) =>{
   return (
   <div style={{padding:'20px'}}>
   <div style={{width:'fit-content'}}>
@@ -11,17 +11,11 @@ export const ListBook = ({title}) =>{
   </div>
   <div style={{ overflow:'auto',width:'fit-content' }}>
     <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
-      <CardCustom/>
+      {list?.map((e)=>{
+        return (
+          <CardCustom name={e?.name} id={e?.id} />
+        )
+      })}
     </div>
   </div>
 </div>
@@ -30,25 +24,24 @@ export const ListBook = ({title}) =>{
 export const Main =  () => {
   const location = useLocation();
   const [books, setBooks] = useState([]);
-  const subjects = location.state.subjects;
-  const studentId = location.state.id;
+  const subjects = location?.state?.subjects;
+  const studentId = 2
   const a = 2
 
   //TODO insert PORT
+  const PORT = 8000
   useEffect(() => {
-    fetch(`localhost:${PORT}/content-base/${studentId}`)
-      .then((response) => response.json())
-      .then((data) => setBooks(data))
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+    axios.get(`http://localhost:${PORT}/books/content-base/${studentId}`).then((response) => {
+      console.log(response?.data);
+      setBooks(response?.data);
+    })
+  },[]);
   return (
-    <div style={{padding:'20px', backgroundColor:'#fee9e8'}}>
-      <ListBook title={'Trending Right Now'}/>
-      <ListBook title={'Based on faculty'}/>
-      <ListBook title={'Personal Recommendation'}/>
-      <ListBook title={'Personal Recommendation by Catagory'}/>
+    <div style={{padding:'20px', backgroundColor:'#fee9e8', minHeight:'100vh'}}>
+      {/* <ListBook title={'Trending Right Now'}/> */}
+      {/* <ListBook title={'Based on faculty'}/> */}
+      <ListBook title={'Personal Recommendation'} list={books}/>
+      {/* <ListBook title={'Personal Recommendation by Catagory'}/> */}
     </div>
   );
 }

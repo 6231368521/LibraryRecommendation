@@ -17,7 +17,7 @@ export const Input =  () => {
     event.preventDefault();
     console.log(id);
     console.log(inputs);
-    navigate('/', {state: {subjects: inputs, id: id}});
+    navigate('/books', {state: {subjects: inputs, id: id}});
   }
 
   const handleCheckboxChange = (event) => {
