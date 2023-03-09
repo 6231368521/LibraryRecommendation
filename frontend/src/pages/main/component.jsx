@@ -21,14 +21,15 @@ export const CardCustom = (props)=>{
 
   return(
     <Card style={{ width: '18rem',margin:'10px',height:'200px' }}>
-      <Card.Body>
-        <Card.Title>{faker.name.fullName()}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">Catagory</Card.Subtitle>
-        <Card.Text>
-          {faker.music.genre()}
-        </Card.Text>
-        <Card.Link href="#">Card Link</Card.Link>
-        <Card.Link href="#">Another Link</Card.Link>
+      <Card.Body style={{ justifyContent:'space-between', display:'flex', flexDirection:'column'}}>
+        <div>
+          <Card.Title>{faker.name.fullName()}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">Catagory</Card.Subtitle>
+          <Card.Text>
+            {faker.music.genre()}
+          </Card.Text>
+        </div>
+        <Card.Link href="/book/1">Link</Card.Link>
       </Card.Body>
     </Card>
   )

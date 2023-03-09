@@ -3,6 +3,30 @@ import { useLocation } from 'react-router-dom';
 import { CardCustom } from './component';
 
 
+export const ListBook = ({title}) =>{
+  return (
+  <div style={{padding:'20px'}}>
+  <div style={{width:'fit-content'}}>
+  <p style={{ fontSize:'24px',padding:'10px', borderRadius:'10px', backgroundColor:'#dd5c8e', color:'white'}}>{title}</p>
+  </div>
+  <div style={{ overflow:'auto',width:'fit-content' }}>
+    <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+      <CardCustom/>
+    </div>
+  </div>
+</div>
+)
+}
 export const Main =  () => {
   const location = useLocation();
   const [books, setBooks] = useState([]);
@@ -20,90 +44,11 @@ export const Main =  () => {
       });
   });
   return (
-    <div style={{padding:'20px'}}>
-      <div style={{padding:'20px'}}>
-        <div>
-        <p style={{ fontSize:'24px'}}>Trending Right Now</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            {/* TODO each CardCustom will takes one book as prop*/}
-            {/* When clicked, it will popup new page for book recommendation content item-based */}
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Based on faculty</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Personal Recommendation</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Personal Recommendation by Catagory</p>
-          {/* use subject to filter here */}
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
+    <div style={{padding:'20px', backgroundColor:'#fee9e8'}}>
+      <ListBook title={'Trending Right Now'}/>
+      <ListBook title={'Based on faculty'}/>
+      <ListBook title={'Personal Recommendation'}/>
+      <ListBook title={'Personal Recommendation by Catagory'}/>
     </div>
   );
 }
