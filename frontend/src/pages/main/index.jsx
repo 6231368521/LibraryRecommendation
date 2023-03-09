@@ -12,7 +12,7 @@ export const Main =  () => {
 
   //TODO insert PORT
   useEffect(() => {
-    fetch('localhost:${PORT}/content-base/${studentId}')
+    fetch(`localhost:${PORT}/content-base/${studentId}`)
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((err) => {
