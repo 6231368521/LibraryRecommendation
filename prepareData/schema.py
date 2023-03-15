@@ -29,5 +29,6 @@ class User(Base):
 
 class UserToBook(Base):
     __tablename__ = "UserToBook"
+    id = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey('User.id'), primary_key=True)
     bookId = Column(Integer, ForeignKey('Book.id'),primary_key=True)

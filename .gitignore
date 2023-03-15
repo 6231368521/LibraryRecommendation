@@ -4,6 +4,7 @@ backend/.env
 backend/__pycache__
 backend/venv
 backend/adjMatrix.pickle
+backend/bookData.pickle
 backend/userMatrix.pickle
 # dependencies
 frontend/node_modules
