@@ -23,26 +23,33 @@ export const ListBook = ({title,list}) =>{
 }
 export const Main =  () => {
   const location = useLocation();
+  console.log(location?.state);
   const [books, setBooks] = useState([]);
-  const subjects = location?.state?.subjects;
-  const studentId = 2
-  const a = 2
+  const [popularBooks,setPopularBooks] = useState([])
 
   //TODO insert PORT
   const PORT = 8000
   useEffect(() => {
-    axios.get(`http://localhost:${PORT}/books/content-base/${studentId}`).then((response) => {
+    axios.get(`http://localhost:${PORT}/books/content-base/${location?.state?.id}`).then((response) => {
       console.log(response?.data);
       setBooks(response?.data);
+    })
+    axios.get(`http://localhost:${PORT}/books/top-borrow`).then((response) => {
+      console.log(response?.data);
+      setPopularBooks(response?.data);
     })
   },[]);
   return (
     <div style={{padding:'20px', backgroundColor:'#fee9e8', minHeight:'100vh'}}>
-      {/* <ListBook title={'Trending Right Now'}/> */}
-      {/* <ListBook title={'Based on faculty'}/> */}
-      <ListBook title={'Personal Recommendation'} list={books}/>
-      {/* <ListBook title={'Personal Recommendation by Catagory'}/> */}
+      <ListBook title={'Trending Right Now'} list={popularBooks} />
+      { location?.state?.isMember &&
+      <>
+        <ListBook title={'Personal Recommendation'} list={books}/>
+        <ListBook title={'Based on faculty'}/>
+        {/* <ListBook title={'Personal Recommendation by Catagory'}/> */}
+      </>
+      }
     </div>
-  );
+  )
 }
 

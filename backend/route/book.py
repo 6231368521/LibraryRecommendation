@@ -1,6 +1,8 @@
+import json
 from fastapi import APIRouter, Depends
 from config.db import SessionLocal
 from model.book import Book, BookToSubject
+from model.user import User, UserSubject
 from sqlalchemy.orm import subqueryload
 from sqlalchemy import func
 import numpy as np
@@ -29,12 +31,29 @@ async def itemBaseRecomment(bookId:int,db: SessionLocal = Depends(get_db)):
     return sorted(result, key=lambda o: selectId.index(o.id))
 
 @book.get("/content-base/{userId}")
-async def contentBaseRecomment(userId:int,db: SessionLocal = Depends(get_db)):
-    books = userMatrix[userId-1,:]
-    books = [book + 1 for book in books]
-    selectId = books[:20]
-    result = db.query(Book).filter(Book.id.in_(selectId)).all()
-    return sorted(result, key=lambda o: selectId.index(o.id))
+async def contentBaseRecomment(userId:str,db: SessionLocal = Depends(get_db)):
+    user = db.query(UserSubject).filter_by(patronRecord = userId).first()
+    if user is None:
+        user = db.query(User).filter_by(patronRecord = userId).first()
+        if user is None:
+            return []
+        else:
+            books = userMatrix[user.id-1,:]
+            books = [book + 1 for book in books]
+            selectId = books[:20]
+            result = db.query(Book).filter(Book.id.in_(selectId)).all()
+            return sorted(result, key=lambda o: selectId.index(o.id))
+    else:
+        userSubject = set(json.loads(user.subject))
+        rate = np.zeros(len(bookData))
+        for i in range(len(bookData)):
+            bookSubject = set(bookData[i]["subject"])
+            rate[i] = len(bookSubject.intersection(userSubject))
+        rate = np.argsort(rate)[::-1]
+        selectId = rate[:20]
+        selectId = [book + 1 for book in selectId]
+        result = db.query(Book).filter(Book.id.in_(selectId)).all()
+        return sorted(result, key=lambda o: selectId.index(o.id))
 
 @book.get("/top-borrow")
 async def topBorrowRecomment(db: SessionLocal = Depends(get_db)):
@@ -56,19 +75,3 @@ async def topBorrowRecomment(db: SessionLocal = Depends(get_db)):
 async def getBook(bookId:int,db: SessionLocal = Depends(get_db)):
     result = db.query(Book).options(subqueryload('subjects')).get(bookId)
     return result
-
-@book.get("/test/{bookId}")
-async def testBook(bookId: int,db: SessionLocal = Depends(get_db)):
-    temp = {8805, 9613, 9614, 9615}
-    test = np.zeros(len(bookData))
-    for i in range(len(bookData)):
-        set1 = set(bookData[i]["subject"])
-        test[i] = len(set1.intersection(temp))
-    for i in range(len(test)):
-        if test[i] != 0:
-            print(i,test[i])
-    test = np.argsort(test)[::-1]
-    selectId = test[:20]
-    selectId = [book + 1 for book in selectId]
-    result = db.query(Book).filter(Book.id.in_(selectId)).all()
-    return sorted(result, key=lambda o: selectId.index(o.id))

@@ -22,10 +22,10 @@ const navigate = useNavigate()
       <Card.Body style={{ justifyContent:'space-between', display:'flex', flexDirection:'column'}}>
         <div>
           <Card.Title>{props?.name}</Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">Id</Card.Subtitle>
+          {/* <Card.Subtitle className="mb-2 text-muted">Id</Card.Subtitle>
           <Card.Text>
             {props?.id}
-          </Card.Text>
+          </Card.Text> */}
         </div>
         <Card.Link onClick={()=>navigate(`/book/${props?.id}`,{state: {name: props?.name, id: props?.id}})}>Link</Card.Link>
       </Card.Body>
