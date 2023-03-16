@@ -32,7 +32,14 @@ bookToSubject = bookToSubject[bookToSubject['content'].notna()]
 bookToSubject = bookToSubject[bookToSubject['record_id'].isin(book['bib_record_metadata_id'].values.tolist())]
 bookToSubject = bookToSubject.rename(columns={'record_id': 'bib_record_metadata_id'})
 
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.strip())
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.split(','))
+bookToSubject = bookToSubject.explode('content')
+bookToSubject = bookToSubject[bookToSubject['content'].str.contains("etc") == False]
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.lower())
+
 subject = bookToSubject[['content']]
+subject = subject.drop_duplicates()
 subject = subject.reset_index(drop=True)
 subject.index += 1
 subject['subjectID'] = subject.index
