@@ -9,36 +9,16 @@ for book in books:
     subs = session.query(BookToSubject.subjectId).where(BookToSubject.bookId == book.id).all()
     subject_ids = [sub.subjectId for sub in subs]
     bookData.append({"id":book.id,"subject":subject_ids})
-# bookData = [
-#     {"id":1,"subject":[1,4,5]},
-#     {"id":2,"subject":[2,4]},
-#     {"id":3,"subject":[3,5]},
-#     {"id":4,"subject":[1,2,4]},
-#     {"id":5,"subject":[1,3,5]},
-# ]
+with open("../backend/bookData.pickle", "wb") as f:
+    pickle.dump(bookData, f)
 userData = []
 users = session.query(User).all()
 for user in users:
     userData.append({"id":user.id})
-# userData = [
-#     {"id":1},
-#     {"id":2},
-#     {"id":3},
-# ]
 borrowData = []
 borrows = session.query(UserToBook).all()
 for borrow in borrows:
     borrowData.append({"userId":borrow.userId,"bookId":borrow.bookId})
-# borrowData = [
-#     {"userId":1,"bookId":1},
-#     {"userId":1,"bookId":4},
-#     {"userId":1,"bookId":4},
-#     {"userId":2,"bookId":1},
-#     {"userId":2,"bookId":3},
-#     {"userId":2,"bookId":5},
-#     {"userId":3,"bookId":2},
-#     {"userId":3,"bookId":4},
-# ]
 user_totals = {}
 for borrow in borrowData:
     user_id = borrow['userId']

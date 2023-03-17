@@ -13,7 +13,7 @@ class Book(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     bibRecord = Column(String)
-    # subjects = relationship('Subject', secondary=BookToSubject.__tablename__, backref='Book')
+    subjects = relationship('Subject', secondary=BookToSubject.__tablename__, backref='Book')
 
     
 class Subject(Base):

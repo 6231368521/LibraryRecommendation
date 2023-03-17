@@ -22,6 +22,9 @@ patron['userID'] = patron.index
 merged_history = pd.merge(history, book, on='bib_record_metadata_id')
 merged_history = pd.merge(merged_history, patron, on='patron_record_metadata_id')
 merged_history = merged_history[['bookID','userID']]
+merged_history = merged_history.reset_index(drop=True)
+merged_history.index += 1 
+merged_history['borrowId'] = merged_history.index
 
 bookToSubject = pd.read_csv('./data/sierra_view_subfield_subjectterms_202301181521.csv', usecols=["record_id", "content"],dtype={"content": str})
 bookToSubject = bookToSubject.drop_duplicates()
@@ -29,7 +32,14 @@ bookToSubject = bookToSubject[bookToSubject['content'].notna()]
 bookToSubject = bookToSubject[bookToSubject['record_id'].isin(book['bib_record_metadata_id'].values.tolist())]
 bookToSubject = bookToSubject.rename(columns={'record_id': 'bib_record_metadata_id'})
 
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.strip())
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.split(','))
+bookToSubject = bookToSubject.explode('content')
+bookToSubject = bookToSubject[bookToSubject['content'].str.contains("etc") == False]
+bookToSubject['content'] = bookToSubject['content'].apply(lambda x: x.lower())
+
 subject = bookToSubject[['content']]
+subject = subject.drop_duplicates()
 subject = subject.reset_index(drop=True)
 subject.index += 1
 subject['subjectID'] = subject.index
@@ -49,7 +59,7 @@ with open('./data/user.sql', 'w') as f:
 
 with open('./data/userTOBook.sql', 'w') as f:
     for index, row in merged_history.iterrows():
-        f.write(f"insert into UserToBook (userId, bookId) values ({row['userID']}, {row['bookID']});\n")
+        f.write(f"insert into UserToBook (id,userId, bookId) values ({row['borrowId']},{row['userID']}, {row['bookID']});\n")
 
 with open('./data/subject.sql', 'w') as f:
     for index, row in subject.iterrows():

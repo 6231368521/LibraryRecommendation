@@ -1,110 +1,55 @@
 import react, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { CardCustom } from './component';
+import axios from 'axios'
 
-
+export const ListBook = ({title,list}) =>{
+  return (
+  <div style={{padding:'20px'}}>
+  <div style={{width:'fit-content'}}>
+  <p style={{ fontSize:'24px',padding:'10px', borderRadius:'10px', backgroundColor:'#dd5c8e', color:'white'}}>{title}</p>
+  </div>
+  <div style={{ overflow:'auto',width:'fit-content' }}>
+    <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
+      {list?.map((e)=>{
+        return (
+          <CardCustom name={e?.name} id={e?.id} />
+        )
+      })}
+    </div>
+  </div>
+</div>
+)
+}
 export const Main =  () => {
   const location = useLocation();
+  console.log(location?.state);
   const [books, setBooks] = useState([]);
-  const subjects = location.state.subjects;
-  const studentId = location.state.id;
-  const a = 2
+  const [popularBooks,setPopularBooks] = useState([])
 
   //TODO insert PORT
+  const PORT = 8000
   useEffect(() => {
-    fetch(`localhost:${PORT}/content-base/${studentId}`)
-      .then((response) => response.json())
-      .then((data) => setBooks(data))
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+    axios.get(`http://localhost:${PORT}/books/content-base/${location?.state?.id}`).then((response) => {
+      console.log(response?.data);
+      setBooks(response?.data);
+    })
+    axios.get(`http://localhost:${PORT}/books/top-borrow`).then((response) => {
+      console.log(response?.data);
+      setPopularBooks(response?.data);
+    })
+  },[]);
   return (
-    <div style={{padding:'20px'}}>
-      <div style={{padding:'20px'}}>
-        <div>
-        <p style={{ fontSize:'24px'}}>Trending Right Now</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            {/* TODO each CardCustom will takes one book as prop*/}
-            {/* When clicked, it will popup new page for book recommendation content item-based */}
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Based on faculty</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Personal Recommendation</p>
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
-      <div style={{padding:'20px'}}>
-        <div>
-          <p style={{ fontSize:'24px'}}>Personal Recommendation by Catagory</p>
-          {/* use subject to filter here */}
-        </div>
-        <div style={{ backgroundColor:'blue',overflow:'auto',width:'68%'}}>
-          <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-            <CardCustom/>
-          </div>
-        </div>
-      </div>
+    <div style={{padding:'20px', backgroundColor:'#fee9e8', minHeight:'100vh'}}>
+      <ListBook title={'Trending Right Now'} list={popularBooks} />
+      { location?.state?.isMember &&
+      <>
+        <ListBook title={'Personal Recommendation'} list={books}/>
+        <ListBook title={'Based on faculty'}/>
+        {/* <ListBook title={'Personal Recommendation by Catagory'}/> */}
+      </>
+      }
     </div>
-  );
+  )
 }
 
