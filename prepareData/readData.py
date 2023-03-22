@@ -47,6 +47,7 @@ subject['subjectID'] = subject.index
 bookToSubject = pd.merge(bookToSubject, book, on='bib_record_metadata_id')
 bookToSubject = pd.merge(bookToSubject, subject, on='content')
 bookToSubject = bookToSubject[['bookID','subjectID']]
+bookToSubject = bookToSubject.drop_duplicates()
 
 with open('./data/book.sql', 'w') as f:
     for index, row in book.iterrows():
