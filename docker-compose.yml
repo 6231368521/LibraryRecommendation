@@ -1,0 +1,24 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000 #configure to take port from env
+    depends_on:
+      - backend
+    networks:
+      - comm
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - name=value #configure to take port from env
+    networks:
+      - comm
+
+networks:
+  comm:
+
+
