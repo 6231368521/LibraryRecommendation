@@ -18,7 +18,7 @@ export const BookPage =  () => {
     axios.get(`http://localhost:${PORT}/books/${id}`).then((response) => {
       setCurrentBook(response?.data)
     })
-  },[]);
+  },[id]);
   return (
     <div style={{padding:'20px',height:'100vh', backgroundColor:'#fee9e8'}}>
       <div style={{padding:'20px', backgroundColor:'white',display:'flex' , borderRadius:'12px'}}>
