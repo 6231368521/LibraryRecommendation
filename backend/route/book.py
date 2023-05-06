@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from config.db import SessionLocal
 from model.book import Book, BookToSubject
 from model.user import User, UserSubject
-from model.faculty import FacultyToBook
+from model.faculty import DepartmentBook
 from sqlalchemy.orm import subqueryload
 from sqlalchemy import func
 import numpy as np
@@ -77,7 +77,7 @@ async def getBook(bookId:int,db: SessionLocal = Depends(get_db)):
     result = db.query(Book).options(subqueryload('subjects')).get(bookId)
     return result
 
-@book.get("/recommendByFaculty/{facultyId}")
-async def topBorrowRecomment(facultyId:int,db: SessionLocal = Depends(get_db)):
-    result = db.query(FacultyToBook).options(subqueryload('book')).filter_by(facultyId = facultyId).limit(20).all()
+@book.get("/recommendByFaculty/{departmentId}")
+async def topBorrowRecomment(departmentId:int,db: SessionLocal = Depends(get_db)):
+    result = db.query(DepartmentBook).options(subqueryload('book')).filter_by(departmentId = departmentId).limit(20).all()
     return result

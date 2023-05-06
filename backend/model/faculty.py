@@ -7,8 +7,14 @@ class Faculty(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
-class FacultyToBook(Base):
-    __tablename__ = "FacultyToBook"
+class Department(Base):
+    __tablename__ = "Department"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
     facultyId = Column(Integer, ForeignKey('Faculty.id'), primary_key=True)
+    code = Column(String)
+class DepartmentBook(Base):
+    __tablename__ = "DepartmentBook"
+    departmentId = Column(Integer, ForeignKey('department.id'), primary_key=True)
     bookId = Column(Integer, ForeignKey('Book.id'),primary_key=True)
     book = relationship('Book')
