@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 
 history = pd.read_csv('./data/history_filtered.csv')
@@ -9,13 +10,15 @@ history.index += 1
 
 book = pd.read_csv('./data/book_filtered.csv',usecols=["bib_record_id", "best_title"])
 book = book.rename(columns={'bib_record_id': 'bib_record_metadata_id'})
-book = book[book['bib_record_metadata_id'].isin(history['bib_record_metadata_id'].values.tolist())]
+# book = book[book['bib_record_metadata_id'].isin(history['bib_record_metadata_id'].values.tolist())]
+book = book.reset_index(drop=True)
 book.index += 1 
 book['bookID'] = book.index
 
 patron = pd.read_csv('./data/patron_filtered.csv',usecols=["id"])
 patron = patron.rename(columns={'id': 'patron_record_metadata_id'})
 patron = patron[patron['patron_record_metadata_id'].isin(history['patron_record_metadata_id'].values.tolist())]
+patron = patron.reset_index(drop=True)
 patron.index += 1
 patron['userID'] = patron.index
 
@@ -49,6 +52,24 @@ bookToSubject = pd.merge(bookToSubject, subject, on='content')
 bookToSubject = bookToSubject[['bookID','subjectID']]
 bookToSubject = bookToSubject.drop_duplicates()
 
+faculty = pd.read_csv('./data/faculty_data.csv')
+faculty.index += 1 
+faculty['facultyID'] = faculty.index
+
+department = pd.read_csv('./data/faculty_department_map.csv')
+department["department_dict"] = department["department_dict"].apply(json.loads)
+department = department.explode('department_dict')
+department[['department_name', 'department_code']] = department['department_dict'].apply(lambda x: pd.Series([list(x.items())[0][0], list(x.items())[0][1][0]]))
+department = pd.merge(department, faculty, on='faculty_id')
+department = department.loc[:, ['facultyID', 'department_name', 'department_code']]
+department.index += 1 
+department['departmentID'] = department.index
+
+departmentBook = pd.read_csv('./data/department_book_map.csv', dtype={'faculty_department_id': object})
+departmentBook = departmentBook.rename(columns={'faculty_department_id': 'department_code'})
+departmentBook = pd.merge(departmentBook, department, on='department_code')
+departmentBook = departmentBook.loc[:, ['departmentID', 'bookID']]
+
 with open('./data/book.sql', 'w') as f:
     for index, row in book.iterrows():
         name = row['best_title'].replace("'", "''").replace('"', '\\"')
@@ -70,5 +91,17 @@ with open('./data/subject.sql', 'w') as f:
 with open('./data/bookToSubject.sql', 'w') as f:
     for index, row in bookToSubject.iterrows():
         f.write(f"insert into BookToSubject (bookId, subjectId) values ({row['bookID']}, {row['subjectID']});\n")
+
+with open('./data/faculty.sql', 'w') as f:
+    for index, row in faculty.iterrows():
+        f.write(f"insert into faculty (id, name) values ({row['facultyID']}, '{row['faculty_name']}');\n")
+
+with open('./data/department.sql', 'w') as f:
+    for index, row in department.iterrows():
+        f.write(f"insert into department (id, name, facultyId, code) values ({row['departmentID']}, '{row['department_name']}',{row['facultyID']}, '{row['department_code']}');\n")
+
+with open('./data/departmentBook.sql', 'w') as f:
+    for index, row in departmentBook.iterrows():
+        f.write(f"insert into departmentBook (departmentId, bookId) values ({row['departmentID']}, {row['bookID']});\n")
 
 print("done")

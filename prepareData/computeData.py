@@ -29,7 +29,7 @@ for borrow in borrowData:
             if user_id not in user_totals:
                 user_totals[user_id] = {}
             if subject_id not in user_totals[user_id]:
-                user_totals[user_id][subject_id] = 0
+                user_totals[user_id][subject_id] = 1
             user_totals[user_id][subject_id] += 1
 value = np.empty((), dtype=object)
 value[()] = (0, 0)
@@ -42,6 +42,8 @@ for i in range(len(user_totals)):
         userSubject = user_totals[i+1]
         bookSubject = bookData[j]["subject"]
         userMatrix[i][j] = sum([userSubject.get(subject, 0) for subject in bookSubject])
+with open("../backend/userSub.pickle", "wb") as f:
+    pickle.dump(np.sort(userMatrix)[:,::-1], f)
 userMatrix = np.argsort(userMatrix)[:,::-1]
 with open("../backend/userMatrix.pickle", "wb") as f:
     pickle.dump(userMatrix, f)
