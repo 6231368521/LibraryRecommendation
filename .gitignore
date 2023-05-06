@@ -3,9 +3,14 @@
 backend/.env
 backend/__pycache__
 backend/venv
+backend/user_totals.pickle
+backend/userSub.pickle
 backend/adjMatrix.pickle
 backend/bookData.pickle
 backend/userMatrix.pickle
+backend/model/__pycache__
+backend/config/__pycache__
+backend/route/__pycache__
 # dependencies
 frontend/node_modules
 frontend/.pnp
