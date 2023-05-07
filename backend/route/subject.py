@@ -12,16 +12,5 @@ def get_db():
         db.close()
 @subject.get("/")
 async def getSubjects(db: SessionLocal = Depends(get_db)):
-    topSubjects = (
-        db.query(
-        BookToSubject.subjectId,
-        func.count().label('count')
-    )
-    .group_by(BookToSubject.subjectId)
-    .order_by(func.count().desc())
-    .limit(20)
-    .all()
-    )
-    topIds = [subject.subjectId for subject in topSubjects]
-    results = db.query(Subject).filter(Subject.id.in_(topIds)).all()
-    return sorted(results, key=lambda o: topIds.index(o.id))
+    results = db.query(Subject).filter(Subject.id.in_([26,31,178,299,12,300,796,257,474,184,408,81,692,599,987,711,1673,957,1197,226])).all()
+    return results
