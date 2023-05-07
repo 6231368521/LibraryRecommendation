@@ -78,6 +78,32 @@ async def getBook(bookId:int,db: SessionLocal = Depends(get_db)):
     return result
 
 @book.get("/recommendByFaculty/{departmentId}")
-async def topBorrowRecomment(departmentId:int,db: SessionLocal = Depends(get_db)):
+async def recommendByFaculty(departmentId:int,db: SessionLocal = Depends(get_db)):
     result = db.query(DepartmentBook).options(subqueryload('book')).filter_by(departmentId = departmentId).limit(20).all()
     return result
+
+@book.get("/recommendByCategory/{userId}")
+async def recommendByCategory(userId:str, categoryId: int,db: SessionLocal = Depends(get_db)):
+    user = db.query(UserSubject).filter_by(patronRecord = userId).first()
+    if user is None:
+        user = db.query(User).filter_by(patronRecord = userId).first()
+        if user is None:
+            return []
+        else:
+            books = userMatrix[user.id-1,:]
+            books = [book + 1 for book in books]
+            selectId = books[:20]
+            result = db.query(Book).join(BookToSubject).filter(Book.id.in_(selectId), BookToSubject.subjectId == categoryId).all()
+            return sorted(result, key=lambda o: selectId.index(o.id))
+    else:
+        userSubject = set(json.loads(user.subject))
+        rate = np.zeros(len(bookData))
+        for i in range(len(bookData)):
+            bookSubject = set(bookData[i]["subject"])
+            rate[i] = len(bookSubject.intersection(userSubject))
+        rate = np.argsort(rate)[::-1]
+        selectId = rate[:20]
+        selectId = [book + 1 for book in selectId]
+        result = db.query(Book).join(BookToSubject).filter(Book.id.in_(selectId), BookToSubject.subjectId == categoryId).all()
+        return sorted(result, key=lambda o: selectId.index(o.id))
+   
