@@ -31,6 +31,8 @@ for borrow in borrowData:
             if subject_id not in user_totals[user_id]:
                 user_totals[user_id][subject_id] = 1
             user_totals[user_id][subject_id] += 1
+with open("../backend/user_totals.pickle", "wb") as f:
+    pickle.dump(user_totals, f)
 value = np.empty((), dtype=object)
 value[()] = (0, 0)
 userMatrix = np.full((len(userData),len(bookData)), value, dtype=object)
