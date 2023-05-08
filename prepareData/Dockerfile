@@ -8,6 +8,4 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . /code
 
-VOLUME /backend
-
-CMD ["./run.sh"]
+CMD ["./entrypoint.sh"]
