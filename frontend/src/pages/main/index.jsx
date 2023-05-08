@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { CardCustom } from './component';
 import axios from 'axios'
 
-export const ListBook = ({title,list,select}) =>{
+export const ListBook = ({title,list,select,select2}) =>{
   return (
   <div style={{padding:'20px'}}>
   <div style={{ display:'flex' }}>
@@ -11,6 +11,7 @@ export const ListBook = ({title,list,select}) =>{
     <p style={{ fontSize:'24px',padding:'10px', borderRadius:'10px', backgroundColor:'#dd5c8e', color:'white'}}>{title}</p>
     </div>
     {select}
+    {select2}
   </div>
   <div style={{ overflow:'auto',width:'fit-content' }}>
     <div style={{ display:'flex',flexWrap:'wrap',height:'220px'}}>
@@ -29,9 +30,10 @@ export const Main =  () => {
   const [books, setBooks] = useState([])
   const [allFaculty,setAllFaculty] = useState([])
   const [bookFaculty,setBookFaculty] = useState([])
-  const [selectedFaculty,setSelectedFaculty] = useState()
+  const [categoryOptions,setCategoryOptions] = useState()
   const [popularBooks,setPopularBooks] = useState([])
-
+  const [selectListCategory,setSelectListCategory] = useState([])
+  const [categoryBooks,setCategoryBooks] = useState([])
   //TODO insert PORT
   const PORT = 8000
   useEffect(()=>{
@@ -56,6 +58,10 @@ export const Main =  () => {
     axios.get(`http://localhost:${PORT}/facultys`).then((response) => {
       setAllFaculty(response?.data);
     })
+    axios.get(`http://localhost:${PORT}/users/${location?.state?.id}/category`).then((response) => {
+      console.log('test',response?.data)
+      setSelectListCategory(response?.data);
+    })
   },[]);
 
   return (
@@ -64,20 +70,29 @@ export const Main =  () => {
       { location?.state?.isMember &&
       <>
         <ListBook title={'Personal Recommendation'} list={books}/>
-        <ListBook title={'Based on faculty'} list={bookFaculty} select={
+        <ListBook title={'Based on faculty'} list={bookFaculty} 
+        select={
           <select
           class="form-select"
           aria-label="Default select example"
           style={{ width:'200px', height:'40px' }}
           onChange={(e)=> {
-            axios.get(`http://localhost:${PORT}/books/recommendByFaculty/${e?.target?.value}`).then((response) => {
+            axios.get(`http://localhost:${PORT}/facultys/${e?.target?.value}`).then((response) => {
               console.log(response)
-              setBookFaculty((response?.data).map((e)=> {
+              setCategoryOptions((response?.data).map((e)=> {
                 return {
-                name:e?.book?.name,
-                id:e?.book?.id,
+                name:e?.name,
+                id:e?.id,
               }
             }));
+            axios.get(`http://localhost:${PORT}/books/recommendByFaculty/${response?.data?.[0]?.id}`).then((response) => {
+              setBookFaculty((response?.data).map((e)=> {
+                return {
+                  name:e?.book?.name,
+                  id:e?.book?.id,
+              }
+            }));
+          })
           })
         }}
           >
@@ -88,8 +103,59 @@ export const Main =  () => {
             })}
           </select>
         }
+        select2={
+          <select
+          class="form-select"
+          aria-label="Default select example"
+          style={{ width:'200px', height:'40px' }}
+          onChange={(e)=> {
+            axios.get(`http://localhost:${PORT}/books/recommendByFaculty/${e?.target?.value}`).then((response) => {
+              console.log(response?.data,'response?.data')
+              setBookFaculty((response?.data).map((e)=> {
+                return {
+                  name:e?.book?.name,
+                  id:e?.book?.id,
+              }
+            }));
+          })
+        }}
+          >
+            {(categoryOptions)?.map((e)=> {
+            return (
+              <option value={e?.id}>{e?.name}</option>
+            )
+            })}
+          </select>
+        }
         />
-        {/* <ListBook title={'Personal Recommendation by Catagory'}/> */}
+        <ListBook
+        title={'Recommend by Category'}
+        list={categoryBooks}
+        select={
+          <select
+          class="form-select"
+          aria-label="Default select example"
+          style={{ width:'200px', height:'40px' }}
+          onChange={(e)=> {
+            axios.get(`http://localhost:${PORT}/books/recommendByCategory/${location?.state?.id}?categoryId=${e?.target?.value}`).then((response) => {
+              console.log(response)
+              setCategoryBooks((response?.data).map((e)=> {
+                return {
+                name:e?.name,
+                id:e?.id,
+              }
+            }));
+          })
+        }}
+          >
+            {(selectListCategory)?.map((e)=> {
+            return (
+              <option value={e?.id}>{e?.name}</option>
+            )
+            })}
+          </select>
+        }
+        />
       </>
       }
     </div>

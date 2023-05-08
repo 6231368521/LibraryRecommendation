@@ -2,10 +2,12 @@ import json
 from fastapi import APIRouter , Depends
 from config.db import SessionLocal
 from model.user import User, UserToBook, UserSubject
+from model.book import Subject
 from sqlalchemy import func
 from pydantic import BaseModel
 import pickle
 from typing import List
+import itertools
 user = APIRouter()
 
 with open("user_totals.pickle", "rb") as f:
@@ -45,12 +47,18 @@ async def addUser(body: AddUserBody,db: SessionLocal = Depends(get_db)):
         return {"code":401,"msg": "user already exist"}
 
 @user.get("/{userId}/category")
-async def getUser(userId: int, db: SessionLocal = Depends(get_db)):
+async def getUserCategory(userId: int, db: SessionLocal = Depends(get_db)):
     user: User = db.query(User).filter_by(patronRecord = userId).first()
+    sub = []
     if user is not None:
         userSub = user_totals[user.id]
         if len(userSub) <= 5:
-            return [x for x in userSub]
+            sub = [x for x in userSub]
         else:
-            return [x for x in userSub[:5]]
-    return []
+            sub = [x for x in dict(itertools.islice(userSub.items(), 5))]
+    userColdStart = db.query(UserSubject).filter_by(patronRecord = userId).first()
+    if userColdStart is not None:
+        sub = json.loads(userColdStart.subject)
+    results = db.query(Subject).filter(Subject.id.in_(sub)).all()
+    return results
+    

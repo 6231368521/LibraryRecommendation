@@ -10,7 +10,6 @@ history.index += 1
 
 book = pd.read_csv('./data/book_filtered.csv',usecols=["bib_record_id", "best_title"])
 book = book.rename(columns={'bib_record_id': 'bib_record_metadata_id'})
-# book = book[book['bib_record_metadata_id'].isin(history['bib_record_metadata_id'].values.tolist())]
 book = book.reset_index(drop=True)
 book.index += 1 
 book['bookID'] = book.index
