@@ -2,7 +2,7 @@
 
 exec docker build -t preparedata .
 
-exec docker run --name preparedatacontainer -d preparedata
+exec docker run --name preparedatacontainer preparedata
 
 cont_id = docker inspect --format="{{.Id}}" preparedatacontainer
 

@@ -37,6 +37,7 @@ export const Main =  () => {
   //TODO insert PORT
   const PORT = 8000
   useEffect(()=>{
+    console.log(allFaculty);
     axios.get(`http://localhost:${PORT}/books/recommendByFaculty/${allFaculty?.[0]?.id}`).then((response) => {
       setBookFaculty((response?.data).map((e)=> {
         return {
@@ -45,6 +46,7 @@ export const Main =  () => {
       }
     }))
     })
+    
   },[allFaculty])
 
 
